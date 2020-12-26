@@ -11,15 +11,40 @@ struct EmojiMemoryGameView: View {
     @ObservedObject var viewModel: EmojiMemoryGame
     
     var body: some View {
-        Grid(viewModel.cards){ card in
+        VStack{
+            HStack{
+                
+                Spacer()
+                
+                
+                Text(viewModel.currentTheme.name).foregroundColor(viewModel.currentTheme.color)
+                
+                Spacer()
+                
+                Button(action: {viewModel.resetGame()}){
+                    Text("New Game")
+                        .foregroundColor(.white)
+                        .padding(5)
+                        .background(
+                            RoundedRectangle(cornerRadius: 5)
+                                .fill(viewModel.currentTheme.color)
+                        )
+            }
+            
+                Spacer()
+                Text("Score: \(viewModel.score)")
+                Spacer()
+            }
+            Divider()
+            Grid(viewModel.cards){ card in
                 CardView(card: card).onTapGesture(perform: {
                     viewModel.choose(card: card)})
                     .padding(cardPadding)
-        }
-                .foregroundColor(Color.orange)
+            }
+            .foregroundColor(viewModel.currentTheme.color)
                 .padding()
         
-                
+        }
     }
     let cardPadding: CGFloat = 5
 }
@@ -63,5 +88,13 @@ struct CardView: View{
     let cornerRadius: CGFloat = 10
     let edgeLineWidth: CGFloat = 3
     let fontScaleFactor: CGFloat = 0.75
+    var gradientLayer: CAGradientLayer = {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = [Color.white, ]//Colors you want to add
+        gradientLayer.startPoint = CGPoint(x: 0, y: 0)
+        gradientLayer.endPoint = CGPoint(x: 1, y: 1)
+        gradientLayer.frame = CGRect.zero
+       return gradientLayer
+    }()
     
 }

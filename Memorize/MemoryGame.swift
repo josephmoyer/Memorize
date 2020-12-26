@@ -9,6 +9,7 @@ import Foundation
 
 struct MemoryGame<CardContent> where CardContent: Equatable{
     var cards: Array<Card>
+    var score: Int
     var lastChosenCardIndex: Int? {
         get { cards.indices.filter { cards[$0].isFaceUp }.only }
         set{
@@ -28,20 +29,35 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
         } 
         cards.shuffle()
         
+        score = 0
+        
     }
     
     mutating func choose(card: Card){
         print("card chosen: \(card)")
+        if card.isFaceUp{
+            return
+        }
         if card.isMatched{
             return
         }
+        
         if let chosenIndex: Int = cards.firstIndex(matching: card),  !cards[chosenIndex].isFaceUp, !cards[chosenIndex].isMatched {
             if let potentialMatchIndex = lastChosenCardIndex{
                 if cards[chosenIndex].content == cards[potentialMatchIndex].content {
                     cards[chosenIndex].isMatched = true
                     cards[potentialMatchIndex].isMatched = true
+                    score += 2
+                }else{
+                    if cards[chosenIndex].isSeen{
+                        score -= 1
+                    }
+                    if cards[potentialMatchIndex].isSeen{
+                        score -= 1
+                    }
                 }
                 cards[chosenIndex].isFaceUp = true
+                cards[chosenIndex].isSeen = true
             } else {
                 lastChosenCardIndex = chosenIndex
             }
@@ -55,6 +71,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
         var isFaceUp: Bool = false
         var isMatched: Bool = false
         var content: CardContent
+        var isSeen: Bool = false
     }
 }
 
